@@ -10,6 +10,7 @@ const newPlayerRank = ref<number | null>(null)
 const newPlayerLevel = ref<number | null>(null)
 const formErrorMessage = ref<string | null>(null)
 const isSubmittingNewPlayer = ref(false)
+const visibleEditSections = ref<Set<string>>(new Set())
 
 const sortedPlayers = computed<Player[]>(() => {
   if (!store.players.length) {
@@ -126,6 +127,14 @@ const handleUpdatePlayerLevel = async (player: Player, level: number | null) => 
     level: nextLevel,
   })
 }
+
+const handleToggleEditSection = (playerId: string) => {
+  if (visibleEditSections.value.has(playerId)) {
+    visibleEditSections.value.delete(playerId)
+  } else {
+    visibleEditSections.value.add(playerId)
+  }
+}
 </script>
 
 <template>
@@ -174,23 +183,40 @@ const handleUpdatePlayerLevel = async (player: Player, level: number | null) => 
                   {{ player.name }}
                 </h3>
               </div>
-              <div class="flex flex-col items-end gap-1 text-xs text-slate-400">
-                <span v-if="player.rank !== null">
-                  Rank:
-                  <span class="font-medium text-slate-200">
-                    {{ player.rank }}
+              <div class="flex items-center gap-2">
+                <div class="flex flex-col items-end gap-1 text-xs text-slate-400">
+                  <span v-if="player.rank !== null">
+                    Rank:
+                    <span class="font-medium text-slate-200">
+                      {{ player.rank }}
+                    </span>
                   </span>
-                </span>
-                <span v-if="player.level !== null">
-                  Level:
-                  <span class="font-medium text-slate-200">
-                    {{ player.level }}
+                  <span v-if="player.level !== null">
+                    Level:
+                    <span class="font-medium text-slate-200">
+                      {{ player.level }}
+                    </span>
                   </span>
-                </span>
+                </div>
+                <button
+                  type="button"
+                  class="rounded-md px-2 py-1 text-xs font-medium text-slate-400 transition-colors hover:bg-slate-800 hover:text-slate-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-500 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900"
+                  :aria-label="`${visibleEditSections.has(player.id) ? 'Hide' : 'Show'} edit level and rank for ${player.name}`"
+                  :aria-expanded="visibleEditSections.has(player.id)"
+                  tabindex="0"
+                  @click="handleToggleEditSection(player.id)"
+                  @keydown.enter="handleToggleEditSection(player.id)"
+                  @keydown.space.prevent="handleToggleEditSection(player.id)"
+                >
+                  {{ visibleEditSections.has(player.id) ? 'Hide' : 'Edit' }}
+                </button>
               </div>
             </div>
 
-            <div class="space-y-3">
+            <div
+              v-if="visibleEditSections.has(player.id)"
+              class="space-y-3"
+            >
               <div class="space-y-1">
                 <p class="text-xs font-medium text-slate-300">
                   Rank
