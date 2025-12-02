@@ -424,47 +424,6 @@ onMounted(async () => {
     </header>
 
     <div class="space-y-4">
-      <div class="flex items-center gap-4">
-        <label
-          for="week-selector"
-          class="text-sm font-medium text-slate-300"
-        >
-          Week:
-        </label>
-        <select
-          id="week-selector"
-          :value="selectedWeekId ?? ''"
-          class="rounded-md border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-slate-100 focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500"
-          @change="handleSelectWeek(($event.target as HTMLSelectElement).value)"
-        >
-          <option
-            v-if="!weeks.length"
-            value=""
-          >
-            No weeks available
-          </option>
-          <option
-            v-for="week in weeks"
-            :key="week.id"
-            :value="week.id"
-          >
-            {{ week.start_date ?? 'N/A' }}
-          </option>
-        </select>
-        <span
-          v-if="isContextLoading || isLoadingStats"
-          class="text-xs text-slate-400"
-        >
-          Loading…
-        </span>
-        <span
-          v-if="contextErrorMessage || statsError"
-          class="text-xs text-rose-400"
-        >
-          {{ contextErrorMessage ?? statsError }}
-        </span>
-      </div>
-
       <div
         v-if="!selectedWeekId"
         class="rounded-xl border border-slate-800 bg-slate-900/80 p-8 text-center"
@@ -600,7 +559,46 @@ onMounted(async () => {
             Show trend chart
           </button>
         </div>
-
+        <div class="flex items-center gap-4 pt-5">
+            <label
+            for="week-selector"
+            class="text-sm font-medium text-slate-300"
+            >
+            Week:
+            </label>
+            <select
+            id="week-selector"
+            :value="selectedWeekId ?? ''"
+            class="rounded-md border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-slate-100 focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500"
+            @change="handleSelectWeek(($event.target as HTMLSelectElement).value)"
+            >
+            <option
+                v-if="!weeks.length"
+                value=""
+            >
+                No weeks available
+            </option>
+            <option
+                v-for="week in weeks"
+                :key="week.id"
+                :value="week.id"
+            >
+                {{ week.start_date ?? 'N/A' }}
+            </option>
+            </select>
+            <span
+            v-if="isContextLoading || isLoadingStats"
+            class="text-xs text-slate-400"
+            >
+            Loading…
+            </span>
+            <span
+            v-if="contextErrorMessage || statsError"
+            class="text-xs text-rose-400"
+            >
+            {{ contextErrorMessage ?? statsError }}
+            </span>
+        </div>
         <div class="overflow-x-auto rounded-xl border border-slate-800 bg-slate-900/80">
         <table class="w-full border-collapse text-sm">
           <thead>
